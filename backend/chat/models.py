@@ -1,0 +1,20 @@
+from django.db import models
+
+class Conversation(models.Model):
+    title = models.CharField(max_length=255)
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=[('active','Active'),('ended','Ended')], default='active')
+    summary = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.CharField(max_length=10, choices=[('user','User'),('ai','AI')])
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender}: {self.content[:50]}"
